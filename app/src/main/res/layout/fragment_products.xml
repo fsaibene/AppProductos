@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.example.fsaibene.appproductos.products.products.ProductsFragment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/products_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F0F0F0"
+        android:scrollbars="vertical"
+        app:layoutManager="LinearLayoutManager"/>
+
+    <LinearLayout
+        android:id="@+id/noProducts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/noProductsIcon"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="center"
+            android:tint="@android:color/darker_gray"
+            app:srcCompat="@drawable/ic_package_variant_closed" />
+        <TextView
+            android:id="@+id/noProductsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/list_item_padding"
+            android:text="@string/no_products_message" />
+    </LinearLayout>
+
+</RelativeLayout>
