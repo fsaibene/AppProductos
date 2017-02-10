@@ -1,5 +1,7 @@
 package com.example.fsaibene.appproductos.products.products.domain.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
@@ -9,12 +11,25 @@ import java.util.UUID;
  */
 
 public class Product {
+    @SerializedName("code")
     private String mCode;
+
+    @SerializedName("name")
     private String mName;
+
+    @SerializedName("description")
     private String mDescription;
+
+    @SerializedName("brand")
     private String mBrand;
+
+    @SerializedName("price")
     private float mPrice;
+
+    @SerializedName("unitsInStock")
     private int mUnitsInStock;
+
+    @SerializedName("imageUrl")
     private String mImageUrl;
 
     public Product(float price, String name, String imageUrl){

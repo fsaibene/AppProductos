@@ -30,7 +30,7 @@ public class ProductsPresenter implements ProductsMvp.Presenter {
     public void loadProducts(final boolean reload) {
         final boolean reallyReload = reload || isFirstLoad;
         if (reallyReload){
-           mProductsView.showLoadingState(true);
+            mProductsView.showLoadingState(true);
             mProductsRepository.refreshProducts();
             mCurrentPage = 1;
         } else {
@@ -58,6 +58,7 @@ public class ProductsPresenter implements ProductsMvp.Presenter {
                 }
         , criteria);
     }
+
     private void processProducts(List<Product> products, boolean reload){
         if (products.isEmpty()){
             if (reload){

@@ -51,9 +51,11 @@ public class ProductsRepository implements IProductsRepository {
     public void refreshProducts() {
         mReload = true;
     }
+
     private void getProductsFromMemory(GetProductsCallback callback, ProductCriteria criteria){
         callback.onProductsLoaded(mMemoryProductsDataSource.find(criteria));
     }
+
     private void getProductsFromServer(final GetProductsCallback callback, final ProductCriteria criteria){
         if(!isOnline()){
             callback.onDataNotAvailable("No hay conexion de red");
