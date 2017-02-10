@@ -1,4 +1,4 @@
-package com.example.fsaibene.appproductos;
+package com.example.fsaibene.appproductos.products.products;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.fsaibene.appproductos.R;
 import com.example.fsaibene.appproductos.products.products.ProductsFragment;
 
 public class ProductsActivity extends AppCompatActivity {
