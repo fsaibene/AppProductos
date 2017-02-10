@@ -38,6 +38,7 @@ public class ProductsFragment extends Fragment implements ProductsMvp.View{
         @Override
         public void onProductClick(Product clickedNote) {
             // Aquí lanzarías la pantalla de detalle del producto
+            Toast.makeText(getActivity().getBaseContext(), "Click on item: "+clickedNote.getCode(),Toast.LENGTH_SHORT).show();
         }
     };
     // TODO: Rename parameter arguments, choose names that match
@@ -87,8 +88,6 @@ public class ProductsFragment extends Fragment implements ProductsMvp.View{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_products, container, false);
-        // Inflate the layout for this fragment
-        //Referencia de la UIIII
 
         mProductsList = (RecyclerView) root.findViewById(R.id.products_list);
         mEmptyView = root.findViewById(R.id.noProducts);
