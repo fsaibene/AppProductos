@@ -5,4 +5,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_products_message">No hay productos todavía</string>
+    <!-- Errores Login -->
+    <string name="error_login">Correo inválido</string>
+    <string name="error_password">Contraseña inválida</string>
+    <string name="error_network">La red no está disponible</string>
+    <string name="action_log_out">Cerrar sesión</string>
 </resources>

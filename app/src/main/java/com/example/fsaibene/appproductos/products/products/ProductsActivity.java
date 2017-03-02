@@ -1,5 +1,6 @@
 package com.example.fsaibene.appproductos.products.products;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.fsaibene.appproductos.R;
+import com.example.fsaibene.appproductos.login.LoginActivity;
+import com.example.fsaibene.appproductos.login.presentation.LoginFragment;
 import com.example.fsaibene.appproductos.products.products.ProductsFragment;
 
 public class ProductsActivity extends AppCompatActivity {
@@ -20,12 +23,19 @@ public class ProductsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (true){
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_products);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar); mProductsFragment = getSupportFragmentManager().findFragmentById(R.id.products_container);
-        setUpToolbar(); setUpProductsFragment();
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mProductsFragment = getSupportFragmentManager().findFragmentById(R.id.products_container);
+        setUpToolbar();
+        setUpProductsFragment();
     }
 
     private void setUpToolbar() {
