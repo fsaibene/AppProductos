@@ -1,6 +1,7 @@
 package com.example.fsaibene.appproductos.products.products;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,18 +11,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.fsaibene.appproductos.R;
 import com.example.fsaibene.appproductos.di.DependencyProvider;
+import com.example.fsaibene.appproductos.login.LoginActivity;
 import com.example.fsaibene.appproductos.products.products.domain.model.Product;
 import com.example.fsaibene.appproductos.products.products.domain.model.ProductsAdapter;
 import com.example.fsaibene.appproductos.products.products.domain.model.ProductsAdapter.*;
+import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,20 +62,9 @@ public class ProductsFragment extends Fragment implements ProductsMvp.View{
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProductsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProductsFragment newInstance(String param1, String param2) {
+    public static ProductsFragment newInstance() {
         ProductsFragment fragment = new ProductsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,10 +73,10 @@ public class ProductsFragment extends Fragment implements ProductsMvp.View{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mProductsAdapter = new ProductsAdapter(new ArrayList<Product>(0), mItemListener);
-        mProductsPresenter = new ProductsPresenter(
-                DependencyProvider.provideProductsRepository(getActivity()),
-                this);
+
+        setHasOptionsMenu(true);
         setRetainInstance(true);
+
     }
 
     @Override
@@ -186,5 +181,24 @@ public class ProductsFragment extends Fragment implements ProductsMvp.View{
     @Override
     public void allowMoreData(boolean allow) {
         mProductsAdapter.setMoreData(allow);
+    }
+
+    @Override
+    public void setPresenter(ProductsMvp.Presenter presenter) {
+        mProductsPresenter = (ProductsPresenter) checkNotNull(presenter);//Check
+    }
+
+    @Override
+    public void showLoginScreen() {
+        startActivity(new Intent(getActivity(), LoginActivity.class));
+        getActivity().finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_log_out) {
+            mProductsPresenter.logOut();
+        }
+        return true;
     }
 }

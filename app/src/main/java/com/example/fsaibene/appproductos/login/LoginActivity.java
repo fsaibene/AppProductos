@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.fsaibene.appproductos.R;
+import com.example.fsaibene.appproductos.di.DependencyProvider;
 import com.example.fsaibene.appproductos.login.presentation.LoginFragment;
+import com.example.fsaibene.appproductos.login.presentation.LoginPresenter;
 
 public class LoginActivity extends AppCompatActivity {
     @Override
@@ -20,9 +22,9 @@ public class LoginActivity extends AppCompatActivity {
                     .add(R.id.activity_login_container, loginFragment)
                     .commit();
         }
-    }
 
-    // <<create>> LoginFragment
-    // <<create>> LoginInteractor
-    // <<create>> LoginPresenter
+        // <<create>> LoginPresenter
+        LoginPresenter loginPresenter = new LoginPresenter(loginFragment,
+                DependencyProvider.provideLoginInteractor(this));
+    }
 }

@@ -1,6 +1,9 @@
 package com.example.fsaibene.appproductos.products.products;
 
+import com.example.fsaibene.appproductos.data.products.datasource.IProductsRepository;
 import com.example.fsaibene.appproductos.data.products.datasource.ProductsRepository;
+import com.example.fsaibene.appproductos.login.data.IUsersRepository;
+import com.example.fsaibene.appproductos.login.data.UsersRepository;
 import com.example.fsaibene.appproductos.products.products.domain.criteria.PagingProductCriteria;
 import com.example.fsaibene.appproductos.products.products.domain.criteria.ProductCriteria;
 import com.example.fsaibene.appproductos.products.products.domain.model.Product;
@@ -16,14 +19,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class ProductsPresenter implements ProductsMvp.Presenter {
 
     private final ProductsRepository mProductsRepository;
+    private final UsersRepository mUsersRepository;
     private final ProductsMvp.View mProductsView;
+
     public static final int PRODUCTS_LIMIT = 20;
+
     private boolean isFirstLoad = true;
     private int mCurrentPage = 1;
-
-    public ProductsPresenter(ProductsRepository pr,ProductsMvp.View productsView) {
-        mProductsRepository = checkNotNull(pr);
+    public ProductsPresenter(ProductsRepository productsRepository, UsersRepository usersRepository, ProductsMvp.View productsView) {
+        mProductsRepository = checkNotNull(productsRepository);
+        mUsersRepository = checkNotNull(usersRepository);
         mProductsView = checkNotNull(productsView);
+        mProductsView.setPresenter(this);
     }
 
     @Override
@@ -59,6 +66,12 @@ public class ProductsPresenter implements ProductsMvp.Presenter {
         , criteria);
     }
 
+    @Override
+    public void logOut() {
+        mUsersRepository.closeSession();
+        mProductsView.showLoginScreen();
+    }
+
     private void processProducts(List<Product> products, boolean reload){
         if (products.isEmpty()){
             if (reload){
@@ -77,4 +90,6 @@ public class ProductsPresenter implements ProductsMvp.Presenter {
             mProductsView.allowMoreData(true);
         }
     }
+
+
 }

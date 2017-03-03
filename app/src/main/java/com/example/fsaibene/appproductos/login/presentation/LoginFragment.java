@@ -7,6 +7,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +74,7 @@ public class LoginFragment extends Fragment implements LoginMvp.View {
         mButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i("asdasd", mEmailField.getText().toString() + mPasswordField.getText().toString());
                 login(mEmailField.getText().toString(), mPasswordField.getText().toString());
             }
         });

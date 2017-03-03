@@ -17,9 +17,12 @@ public interface ProductsMvp {
         void showProductsPage(List<Product> products);
         void showLoadMoreIndicator(boolean show);
         void allowMoreData(boolean show);
+        void setPresenter(Presenter productsPresenter);
+        void showLoginScreen();
     }
 
     interface Presenter{
         void loadProducts(boolean reload);
+        void logOut();
     }
 }

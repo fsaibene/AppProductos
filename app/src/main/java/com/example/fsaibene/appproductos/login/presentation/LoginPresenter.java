@@ -15,12 +15,13 @@ public class LoginPresenter implements LoginMvp.Presenter, ILoginInteractor.OnLo
     public LoginPresenter(LoginMvp.View loginView, LoginInteractor loginInteractor) {
         mLoginView = Preconditions.checkNotNull(loginView);
         this.mLoginInteractor = Preconditions.checkNotNull(loginInteractor);
+        mLoginView.setPresenter(this);
     }
 
     @Override
     public void validateCredentials(String email, String password) {
         mLoginView.showLoadingIndicator(true);
-//        mLoginInteractor.login(email, password, this);
+        mLoginInteractor.login(email, password, this);
     }
 
     @Override

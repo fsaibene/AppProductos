@@ -12,30 +12,43 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.fsaibene.appproductos.R;
+import com.example.fsaibene.appproductos.di.DependencyProvider;
 import com.example.fsaibene.appproductos.login.LoginActivity;
+import com.example.fsaibene.appproductos.login.data.preferences.UserPrefs;
 import com.example.fsaibene.appproductos.login.presentation.LoginFragment;
 import com.example.fsaibene.appproductos.products.products.ProductsFragment;
 
 public class ProductsActivity extends AppCompatActivity {
     private Toolbar mToolbar;
-    private Fragment mProductsFragment;
+    private ProductsFragment mProductsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (true){
+
+        // Redirección al Login
+        if (!UserPrefs.getInstance().isLoggedIn()) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
-        setContentView(R.layout.activity_products);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
+        setContentView(R.layout.activity_products);
+
+        // Referencias UI
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mProductsFragment = getSupportFragmentManager().findFragmentById(R.id.products_container);
+        mProductsFragment = (ProductsFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.products_container);
+
+        // Setup
         setUpToolbar();
         setUpProductsFragment();
+
+        // Crear presentador
+        new ProductsPresenter(
+                DependencyProvider.provideProductsRepository(this),
+                DependencyProvider.provideUsersRepository(this),
+                mProductsFragment);
     }
 
     private void setUpToolbar() {
@@ -43,8 +56,12 @@ public class ProductsActivity extends AppCompatActivity {
     }
     private void setUpProductsFragment() {
         if (mProductsFragment == null) {
-            mProductsFragment = ProductsFragment.newInstance(null, null);
-            getSupportFragmentManager() .beginTransaction() .add(R.id.products_container, mProductsFragment) .commit(); }
+            mProductsFragment = ProductsFragment.newInstance();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.products_container, mProductsFragment)
+                    .commit();
+        }
     }
 
     @Override
@@ -56,16 +73,6 @@ public class ProductsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 }
