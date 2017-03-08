@@ -1,15 +1,43 @@
 package com.example.fsaibene.appproductos.login.domain.entities;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by fsaibene on 2/3/2017.
  */
 
 public class User {
-    private String mEmail, mPassword;
 
-    public User(String mail, String password) {
-        mEmail = mail;
-        mPassword = password;
+    @SerializedName("id")
+    private String mId;
+    @SerializedName("email")
+    private String mEmail;
+    @SerializedName("username")
+    private String mUsername;
+    private String mPassword;
+    @SerializedName("employee_emp_no")
+    private int mEmployeeEmpNo;
+    @SerializedName("role_id")
+    private int mRoleId;
+    @SerializedName("token")
+    private String mToken;
+
+    public User(String id, String email, String password,
+                int employeeEmpNo, int roleId, String token) {
+        this.mEmail = email;
+        this.mPassword = password;
+        this.mId = id;
+        this.mEmployeeEmpNo = employeeEmpNo;
+        this.mRoleId = roleId;
+        this.mToken = token;
+    }
+
+    public String getUsername() {
+        return mEmail;
+    }
+
+    public void setEmail(String email) {
+        this.mEmail = email;
     }
 
     public String getPassword() {
@@ -20,11 +48,19 @@ public class User {
         this.mPassword = password;
     }
 
-    public String getEmail() {
-        return mEmail;
+    public String getId() {
+        return mId;
     }
 
-    public void setEmail(String email) {
-        this.mEmail = email;
+    public int getEmployeeEmpNo() {
+        return mEmployeeEmpNo;
+    }
+
+    public int getRoleId() {
+        return mRoleId;
+    }
+
+    public String getToken() {
+        return mToken;
     }
 }

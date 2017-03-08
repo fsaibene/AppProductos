@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 
 import com.example.fsaibene.appproductos.data.products.datasource.cloud.ICloudProductsDataSource;
 import com.example.fsaibene.appproductos.data.products.datasource.memory.IMemoryProductsDataSource;
+import com.example.fsaibene.appproductos.login.data.preferences.IUserPreferences;
 import com.example.fsaibene.appproductos.products.products.domain.criteria.ProductCriteria;
 import com.example.fsaibene.appproductos.products.products.domain.model.Product;
 
@@ -21,12 +22,16 @@ public class ProductsRepository implements IProductsRepository {
 
     private final IMemoryProductsDataSource mMemoryProductsDataSource;
     private final ICloudProductsDataSource mCloudProductsDataSource;
+    private final IUserPreferences mUserPreferences;
     private final Context mContext;
     private boolean mReload;
 
-    public ProductsRepository(IMemoryProductsDataSource memoryDataSource,ICloudProductsDataSource cloudDataSource, Context context){
+    public ProductsRepository(IMemoryProductsDataSource memoryDataSource,
+                              ICloudProductsDataSource cloudDataSource,
+                              Context context, IUserPreferences userPreferences) {
         mMemoryProductsDataSource = checkNotNull(memoryDataSource);
         mCloudProductsDataSource = checkNotNull(cloudDataSource);
+        mUserPreferences = checkNotNull(userPreferences);
         mContext = checkNotNull(context);
     }
     @Override
@@ -61,8 +66,11 @@ public class ProductsRepository implements IProductsRepository {
             callback.onDataNotAvailable("No hay conexion de red");
             return;
         }
+        // Obtener el token
+         String token = mUserPreferences.getAccessToken();
+
         mCloudProductsDataSource.getProducts(
-            new ICloudProductsDataSource.ProductsServiceCallback(){
+            new ICloudProductsDataSource.ProductServiceCallback(){
                 @Override
                 public void onLoaded(List<Product> products){
                 refreshMemoryDataSource(products);
@@ -75,7 +83,7 @@ public class ProductsRepository implements IProductsRepository {
                 }
 
             }
-        , criteria);
+        , criteria, token);
     }
     private boolean isOnline(){
         ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -90,5 +98,6 @@ public class ProductsRepository implements IProductsRepository {
         }
         mReload = false;
     }
+
 
 }

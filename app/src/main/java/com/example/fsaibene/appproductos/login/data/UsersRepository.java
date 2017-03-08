@@ -3,6 +3,7 @@ package com.example.fsaibene.appproductos.login.data;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.widget.Toast;
 
 import com.example.fsaibene.appproductos.R;
 import com.example.fsaibene.appproductos.login.data.cloud.ICloudUsersDataSource;
@@ -36,12 +37,12 @@ public class UsersRepository implements IUsersRepository {
             callback.onError(mContext.getString(R.string.error_network));
             return;
         }
-
         mUserService.auth(email, password,
                 new ICloudUsersDataSource.UserServiceCallback() {
                     @Override
                     public void onAuthFinished(User user) {
                         mUserPreferences.save(user);
+                        Toast.makeText(mContext, mUserPreferences.getAccessToken(),Toast.LENGTH_SHORT).show();//Aca llega, ver tomorrowtest_user
                         callback.onSuccess();
                     }
 

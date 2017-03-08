@@ -1,4 +1,4 @@
-package com.example.fsaibene.appproductos.login.usecases;
+package com.example.fsaibene.appproductos.login.domain.entities.usecases;
 
 /**
  * Created by fsaibene on 2/3/2017.

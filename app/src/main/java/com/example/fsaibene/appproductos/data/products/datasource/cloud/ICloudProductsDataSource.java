@@ -10,9 +10,9 @@ import java.util.List;
  */
 
 public interface ICloudProductsDataSource {
-    interface ProductsServiceCallback{
+    interface ProductServiceCallback{
         void onLoaded(List<Product> products);
         void onError(String error);
     }
-    void getProducts(ProductsServiceCallback callback, ProductCriteria criteria);
+    void getProducts(ProductServiceCallback callback, ProductCriteria criteria, String token);
 }

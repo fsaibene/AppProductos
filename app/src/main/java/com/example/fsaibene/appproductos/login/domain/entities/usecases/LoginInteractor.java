@@ -1,10 +1,9 @@
-package com.example.fsaibene.appproductos.login.usecases;
+package com.example.fsaibene.appproductos.login.domain.entities.usecases;
 
 import android.text.TextUtils;
 import android.util.Patterns;
 
 import com.example.fsaibene.appproductos.login.data.IUsersRepository;
-import com.example.fsaibene.appproductos.login.usecases.ILoginInteractor;
 import com.google.common.base.Preconditions;
 
 /**

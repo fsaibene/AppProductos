@@ -14,5 +14,5 @@ public interface IUserPreferences {
 
     boolean isLoggedIn();
 
-//    String getAccessToken();
+    String getAccessToken();
 }

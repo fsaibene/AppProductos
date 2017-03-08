@@ -1,6 +1,7 @@
 package com.example.fsaibene.appproductos.login.presentation;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -72,14 +74,25 @@ public class LoginFragment extends Fragment implements LoginMvp.View {
         mPasswordField.addTextChangedListener(new TextWatcherLabel(mPasswordFloatingLabel));
 
         mButtonLogin.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.i("asdasd", mEmailField.getText().toString() + mPasswordField.getText().toString());
+//                login(mEmailField.getText().toString(), mPasswordField.getText().toString());
+//            }
             @Override
-            public void onClick(View v) {
-                Log.i("asdasd", mEmailField.getText().toString() + mPasswordField.getText().toString());
-                login(mEmailField.getText().toString(), mPasswordField.getText().toString());
+            public void onClick(View view) {
+                login(mEmailField.getText().toString(),
+                        mPasswordField.getText().toString());
+                closeKeyboard();
             }
         });
         Glide.with(this).load("file:///android_asset/fb.png").into(mImageLogo);
         return uiRoot;
+    }
+    private void closeKeyboard() {
+        InputMethodManager imm = (InputMethodManager)
+                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getView().getWindowToken(),0);
     }
 
     @Override

@@ -27,7 +27,7 @@ public class ProductsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Redirección al Login
-        if (!UserPrefs.getInstance().isLoggedIn()) {
+        if (!UserPrefs.getInstance(this).isLoggedIn()) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;

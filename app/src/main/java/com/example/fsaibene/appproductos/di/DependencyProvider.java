@@ -9,7 +9,7 @@ import com.example.fsaibene.appproductos.data.products.datasource.memory.MemoryP
 import com.example.fsaibene.appproductos.login.data.UsersRepository;
 import com.example.fsaibene.appproductos.login.data.cloud.CloudUsersDataSource;
 import com.example.fsaibene.appproductos.login.data.preferences.UserPrefs;
-import com.example.fsaibene.appproductos.login.usecases.LoginInteractor;
+import com.example.fsaibene.appproductos.login.domain.entities.usecases.LoginInteractor;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,7 +37,7 @@ public class DependencyProvider {
     public static ProductsRepository provideProductsRepository(@NonNull Context context){
         mContext = checkNotNull(context);
         if (mProductsRepository == null){
-            mProductsRepository = new ProductsRepository(getMemorySource(), getCloudSource(), context);
+            mProductsRepository = new ProductsRepository(getMemorySource(), getCloudSource(), context, getUserPrefs());
         }
         return  mProductsRepository;
     }
@@ -69,7 +69,7 @@ public class DependencyProvider {
 
     public static UserPrefs getUserPrefs(){
         if (sUserPrefs == null){
-            sUserPrefs = UserPrefs.getInstance();// despues cambia la firma
+            sUserPrefs = UserPrefs.getInstance(mContext);// despues cambia la firma
         }
         return sUserPrefs;
     }

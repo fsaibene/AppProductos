@@ -23,7 +23,6 @@ public class LoginActivity extends AppCompatActivity {
                     .commit();
         }
 
-        // <<create>> LoginPresenter
         LoginPresenter loginPresenter = new LoginPresenter(loginFragment,
                 DependencyProvider.provideLoginInteractor(this));
     }

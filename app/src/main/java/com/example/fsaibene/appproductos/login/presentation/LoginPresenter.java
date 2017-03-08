@@ -1,6 +1,6 @@
 package com.example.fsaibene.appproductos.login.presentation;
-import com.example.fsaibene.appproductos.login.usecases.ILoginInteractor;
-import com.example.fsaibene.appproductos.login.usecases.LoginInteractor;
+import com.example.fsaibene.appproductos.login.domain.entities.usecases.ILoginInteractor;
+import com.example.fsaibene.appproductos.login.domain.entities.usecases.LoginInteractor;
 import com.google.common.base.Preconditions;
 
 /**
