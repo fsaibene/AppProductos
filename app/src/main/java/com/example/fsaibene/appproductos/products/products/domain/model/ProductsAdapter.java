@@ -28,7 +28,7 @@ import java.util.List;
  */
 
 public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements DataLoading{
-    
+
     private List<Product> mProducts;
     private ProductItemListener mItemListener;
     private boolean mLoading;
@@ -36,7 +36,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final static int TYPE_PRODUCT = 1;
     private final static int TYPE_LOADING_MORE = 2;
     public ProductsAdapter(List<Product> products, ProductItemListener itemListener) {
-        setList(products); 
+        setList(products);
         mItemListener = itemListener;
     }
 

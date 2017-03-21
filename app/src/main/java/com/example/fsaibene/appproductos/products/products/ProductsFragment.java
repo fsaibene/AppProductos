@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,13 +16,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.example.fsaibene.appproductos.R;
 import com.example.fsaibene.appproductos.di.DependencyProvider;
 import com.example.fsaibene.appproductos.login.LoginActivity;
+import com.example.fsaibene.appproductos.productdetail.ProductDetailActivity;
 import com.example.fsaibene.appproductos.products.products.domain.model.Product;
 import com.example.fsaibene.appproductos.products.products.domain.model.ProductsAdapter;
 import com.example.fsaibene.appproductos.products.products.domain.model.ProductsAdapter.*;
+import com.example.fsaibene.appproductos.util.ActivityUtils;
 import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
@@ -35,38 +39,27 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * create an instance of this fragment.
  */
 public class ProductsFragment extends Fragment implements ProductsMvp.View{
+
     private RecyclerView mProductsList;
     private ProductsAdapter mProductsAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private View mEmptyView;
-    private ProductsPresenter mProductsPresenter;
-    private ProductItemListener mItemListener = new ProductItemListener() {
-        @Override
-        public void onProductClick(Product clickedNote) {
-            // Aquí lanzarías la pantalla de detalle del producto
-            Toast.makeText(getActivity().getBaseContext(), "Click on item: "+clickedNote.getCode(),Toast.LENGTH_SHORT).show();
-        }
-    };
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private ProductsAdapter.ProductItemListener mItemListener =
+            new ProductsAdapter.ProductItemListener() {
+                @Override
+                public void onProductClick(Product clickedProduct) {
+                    mProductsPresenter.openProductDetails(clickedProduct.getCode());
+                }
+            };
 
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private ProductsMvp.Presenter mProductsPresenter;
 
     public ProductsFragment() {
         // Required empty public constructor
     }
 
     public static ProductsFragment newInstance() {
-        ProductsFragment fragment = new ProductsFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+        return new ProductsFragment();
     }
 
     @Override
@@ -74,9 +67,8 @@ public class ProductsFragment extends Fragment implements ProductsMvp.View{
         super.onCreate(savedInstanceState);
         mProductsAdapter = new ProductsAdapter(new ArrayList<Product>(0), mItemListener);
 
+        //setRetainInstance(true);
         setHasOptionsMenu(true);
-        setRetainInstance(true);
-
     }
 
     @Override
@@ -84,22 +76,22 @@ public class ProductsFragment extends Fragment implements ProductsMvp.View{
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_products, container, false);
 
+        if(ActivityUtils.isTwoPane(getActivity())){
+            Toolbar toolbar = (Toolbar) root.findViewById(R.id.toolbarList);
+            ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        }
         mProductsList = (RecyclerView) root.findViewById(R.id.products_list);
         mEmptyView = root.findViewById(R.id.noProducts);
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.refresh_layout);
 
         setUpProductsList();
         setUptRefreshLayout();
+        if (savedInstanceState != null) {
+            hideList(false);
+        }
         return root;
     }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if(savedInstanceState == null){
-            mProductsPresenter.loadProducts(false);
-        }
-    }
 
     private void setUptRefreshLayout() {
         mSwipeRefreshLayout.setColorSchemeColors(
@@ -122,7 +114,7 @@ public class ProductsFragment extends Fragment implements ProductsMvp.View{
         final LinearLayoutManager lm = (LinearLayoutManager) mProductsList.getLayoutManager();
 
         mProductsList.addOnScrollListener(
-                new InfiniteScrollListener(lm, mProductsAdapter) {
+                new InfiniteScrollListener(mProductsAdapter, lm) {
                     @Override
                     public void onLoadMore() {
                         mProductsPresenter.loadProducts(false);
@@ -132,18 +124,32 @@ public class ProductsFragment extends Fragment implements ProductsMvp.View{
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("List Fragment", "Resume");
+        mProductsPresenter.loadProducts(false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_log_out) {
+            mProductsPresenter.logOut();
+        }
+        return false;
+    }
+
+    @Override
     public void showProducts(List<Product> products) {
         mProductsAdapter.replaceData(products);
-
-        mProductsList.setVisibility(View.VISIBLE);
-        mEmptyView.setVisibility(View.GONE);
+        hideList(false);
     }
 
     @Override
     public void showLoadingState(final boolean show) {
-        if(getView() == null){
+        if (getView() == null) {
             return;
         }
+
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -154,19 +160,19 @@ public class ProductsFragment extends Fragment implements ProductsMvp.View{
 
     @Override
     public void showEmptyState() {
-        mProductsList.setVisibility(View.GONE);
-        mEmptyView.setVisibility(View.VISIBLE);
+        hideList(true);
     }
 
     @Override
     public void showProductsError(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG)
+                .show();
     }
 
     @Override
     public void showProductsPage(List<Product> products) {
-
         mProductsAdapter.addData(products);
+        hideList(false);
     }
 
     @Override
@@ -185,7 +191,12 @@ public class ProductsFragment extends Fragment implements ProductsMvp.View{
 
     @Override
     public void setPresenter(ProductsMvp.Presenter presenter) {
-        mProductsPresenter = (ProductsPresenter) checkNotNull(presenter);//Check
+        mProductsPresenter = Preconditions.checkNotNull(presenter);
+    }
+
+    @Override
+    public ProductsMvp.Presenter getPresenter() {
+        return mProductsPresenter;
     }
 
     @Override
@@ -195,10 +206,17 @@ public class ProductsFragment extends Fragment implements ProductsMvp.View{
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_log_out) {
-            mProductsPresenter.logOut();
-        }
-        return true;
+    public void showProductDetailScreen(String productCode) {
+        Intent i = new Intent(getActivity(), ProductDetailActivity.class);
+        i.putExtra(ProductDetailActivity.EXTRA_PRODUCT_CODE, productCode);
+        startActivity(i);
     }
+
+
+    private void hideList(boolean hide) {
+        mProductsList.setVisibility(hide ? View.GONE : View.VISIBLE);
+        mEmptyView.setVisibility(hide ? View.VISIBLE : View.GONE);
+    }
+
+
 }

@@ -41,6 +41,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Correo electrónico"
+                    android:text="test_user@email.com"
                     android:imeOptions="actionNext"
                     android:inputType="textEmailAddress"
                 />
@@ -60,6 +61,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Contraseña"
+                    android:text="12345"
                     android:imeOptions="actionNext"
                     android:inputType="textPassword"
                     />

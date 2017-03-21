@@ -2,11 +2,15 @@ package com.example.fsaibene.appproductos.data.products.datasource.cloud;
 
 import android.content.pm.LauncherApps;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.fsaibene.appproductos.data.api.ErrorResponse;
 import com.example.fsaibene.appproductos.data.api.RestService;
 import com.example.fsaibene.appproductos.products.products.domain.criteria.ProductCriteria;
 import com.example.fsaibene.appproductos.products.products.domain.model.Product;
+import com.example.fsaibene.appproductos.selection.specification.Query;
+import com.example.fsaibene.appproductos.selection.specification.Specification;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
@@ -22,36 +26,49 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Created by fsaibene on 8/2/2017.
  */
 
 public class CloudProductsDataSource implements ICloudProductsDataSource{
+    private static CloudProductsDataSource INSTANCE = null;
 
-    public static final String BASE_URL = "http://192.168.0.15/2/v1/";
     private final Retrofit mRetrofit;
     private final RestService mRestService;
 
-    public CloudProductsDataSource() {
+    private CloudProductsDataSource() {
+
         mRetrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(RestService.APP_PRODUCTOS_SERVICE_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
         mRestService = mRetrofit.create(RestService.class);
     }
 
-    @Override
-    public void getProducts(final ProductServiceCallback callback,
-                            ProductCriteria criteria, String token) {
+    public static CloudProductsDataSource getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new CloudProductsDataSource();
+        }
+        return INSTANCE;
+    }
 
-        Call<List<Product>> call = mRestService.getProducts(token);
+    @Override
+    public void getProducts(@NonNull Query query, String userToken,
+                            final ProductServiceCallback callback) {
+        checkNotNull(query, "query no puede ser null");
+
+        Call<List<Product>> call = mRestService.getProducts(userToken);
 
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call,
                                    Response<List<Product>> response) {
-                // Procesamos los posibles casos
+
                 processGetProductsResponse(response, callback);
+
             }
 
             @Override
@@ -60,21 +77,31 @@ public class CloudProductsDataSource implements ICloudProductsDataSource{
             }
         });
     }
+
     private void processGetProductsResponse(Response<List<Product>> response,
                                             ProductServiceCallback callback) {
-        // ¿LLegaron los productos sanos y salvos?
+
         if (response.isSuccessful()) {
-            callback.onLoaded(response.body());
+            List<Product> serverProducts = response.body();
+
+            if (serverProducts.size() == 0) {
+                callback.onError("No hay productos en el servidor");
+                return;
+            }
+
+            callback.onLoaded(serverProducts);
             return;
         }
+
         ResponseBody errorBody = response.errorBody();
 
         if (errorBody.contentType().subtype().equals("json")) {
             ErrorResponse errorResponse = ErrorResponse.fromErrorBody(errorBody);
             callback.onError(errorResponse.getMessage());
+            return;
         }
+
         // Errores ajenos a la API
         callback.onError(response.code() + " " + response.message());
-
     }
 }

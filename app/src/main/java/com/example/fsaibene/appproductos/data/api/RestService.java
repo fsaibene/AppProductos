@@ -16,7 +16,7 @@ import retrofit2.http.POST;
 
 public interface RestService {
 
-    String APP_PRODUCTOS_SERVICE_BASE_URL = "http://192.168.0.15/2/v1/";
+    String APP_PRODUCTOS_SERVICE_BASE_URL = "http://192.168.0.15/3/v1/";
 
 
     @GET("products")

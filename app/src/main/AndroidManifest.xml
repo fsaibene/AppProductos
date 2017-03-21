@@ -21,8 +21,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".login.LoginActivity"
-            android:theme="@style/AppTheme.Login"></activity>
+        <activity
+            android:name=".login.LoginActivity"
+            android:theme="@style/AppTheme.Login" />
+        <activity
+            android:name=".productdetail.ProductDetailActivity"
+            android:label="@string/title_activity_product_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <provider
+            android:name=".external.sqlite.AppProductosProvider"
+            android:authorities="com.example.fsaibene.appproductos"
+            android:enabled="true"
+            android:exported="true"></provider>
     </application>
 
 </manifest>

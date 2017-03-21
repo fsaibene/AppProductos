@@ -74,11 +74,6 @@ public class LoginFragment extends Fragment implements LoginMvp.View {
         mPasswordField.addTextChangedListener(new TextWatcherLabel(mPasswordFloatingLabel));
 
         mButtonLogin.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.i("asdasd", mEmailField.getText().toString() + mPasswordField.getText().toString());
-//                login(mEmailField.getText().toString(), mPasswordField.getText().toString());
-//            }
             @Override
             public void onClick(View view) {
                 login(mEmailField.getText().toString(),

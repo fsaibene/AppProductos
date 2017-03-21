@@ -38,6 +38,18 @@ public class Product {
         mName = name;
         mImageUrl = imageUrl;
     }
+
+    public Product(String code, String name, String description,
+                   String brand, float price, int unitsInStock, String imageUrl) {
+        mCode = code;
+        mName = name;
+        mDescription = description;
+        mBrand = brand;
+        mPrice = price;
+        mUnitsInStock = unitsInStock;
+        mImageUrl = imageUrl;
+    }
+
     public String getCode(){
         return mCode;
     }
@@ -56,7 +68,7 @@ public class Product {
     public String getImageUrl(){
         return mImageUrl;
     }
-    public Object getUnitsInStock(){
+    public int getUnitsInStock(){
         return mUnitsInStock;
     }
     public void setCode(String mCode) {

@@ -5,11 +5,14 @@ import android.support.annotation.NonNull;
 
 import com.example.fsaibene.appproductos.data.products.datasource.ProductsRepository;
 import com.example.fsaibene.appproductos.data.products.datasource.cloud.CloudProductsDataSource;
+import com.example.fsaibene.appproductos.data.products.datasource.local.LocalProductsDataSource;
 import com.example.fsaibene.appproductos.data.products.datasource.memory.MemoryProductsDataSource;
 import com.example.fsaibene.appproductos.login.data.UsersRepository;
 import com.example.fsaibene.appproductos.login.data.cloud.CloudUsersDataSource;
 import com.example.fsaibene.appproductos.login.data.preferences.UserPrefs;
 import com.example.fsaibene.appproductos.login.domain.entities.usecases.LoginInteractor;
+import com.example.fsaibene.appproductos.products.products.domain.usecase.GetProducts;
+import com.example.fsaibene.appproductos.selection.specification.Specification;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -20,64 +23,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class DependencyProvider {
 
-    private static Context mContext;
-    private static MemoryProductsDataSource memorySource = null;
-    private static CloudProductsDataSource cloudSource = null;
-    private static ProductsRepository mProductsRepository = null;
-
-    private static UsersRepository sUsersRepository = null;
-    private static CloudUsersDataSource sUsersCloudStore = null;
-    private static UserPrefs sUserPrefs = null;
-
-    private static LoginInteractor sLoginInteractor = null;
-
-    public DependencyProvider() {
+    private DependencyProvider() {
     }
 
-    public static ProductsRepository provideProductsRepository(@NonNull Context context){
-        mContext = checkNotNull(context);
-        if (mProductsRepository == null){
-            mProductsRepository = new ProductsRepository(getMemorySource(), getCloudSource(), context, getUserPrefs());
-        }
-        return  mProductsRepository;
-    }
-    public static MemoryProductsDataSource getMemorySource(){
-        if (memorySource == null){
-            memorySource = new MemoryProductsDataSource();
-        }
-        return memorySource;
-    }
-    public static CloudProductsDataSource getCloudSource(){
-        if (cloudSource == null){
-            cloudSource = new CloudProductsDataSource();
-        }
-        return cloudSource;
+    public static ProductsRepository provideProductsRepository(@NonNull Context context) {
+        return ProductsRepository.getInstance(
+                MemoryProductsDataSource.getInstance(),
+                LocalProductsDataSource.getInstance(context.getContentResolver()),
+                CloudProductsDataSource.getInstance(),
+                UserPrefs.getInstance(context),
+                context);
     }
 
-    public static UsersRepository provideUsersRepository(Context context){
-        if (sUsersRepository == null){
-            sUsersRepository = new UsersRepository(usersCloudStore(), getUserPrefs(), context);
-        }
-        return sUsersRepository;
-    }
-    private static CloudUsersDataSource usersCloudStore() {
-        if(sUsersCloudStore == null){
-            sUsersCloudStore = CloudUsersDataSource.getInstance();
-        }
-        return sUsersCloudStore;
+    public static UsersRepository provideUsersRepository(@NonNull Context context) {
+        return UsersRepository.getInstance(CloudUsersDataSource.getInstance(),
+                UserPrefs.getInstance(context), context);
     }
 
-    public static UserPrefs getUserPrefs(){
-        if (sUserPrefs == null){
-            sUserPrefs = UserPrefs.getInstance(mContext);// despues cambia la firma
-        }
-        return sUserPrefs;
+    public static LoginInteractor provideLoginInteractor(@NonNull Context context) {
+        return new LoginInteractor(provideUsersRepository(context));
     }
 
-    public static LoginInteractor provideLoginInteractor(Context context){
-        if (sLoginInteractor == null){
-            sLoginInteractor = new LoginInteractor(provideUsersRepository(context));
-        }
-        return sLoginInteractor;
+    public static GetProducts provideGetProducts(@NonNull Context context) {
+        return new GetProducts(provideProductsRepository(context));
     }
 }

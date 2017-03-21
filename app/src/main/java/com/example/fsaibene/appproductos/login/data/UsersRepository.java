@@ -17,6 +17,7 @@ import com.google.common.base.Preconditions;
 
 public class UsersRepository implements IUsersRepository {
 
+    private static UsersRepository INSTANCE = null;
     // Relaciones de composición
     private final ICloudUsersDataSource mUserService;
     private final IUserPreferences mUserPreferences;
@@ -29,6 +30,15 @@ public class UsersRepository implements IUsersRepository {
         mUserService = Preconditions.checkNotNull(userService);
         mUserPreferences = Preconditions.checkNotNull(userPreferences);
         mContext = Preconditions.checkNotNull(controllerContext);
+    }
+
+    public static UsersRepository getInstance(ICloudUsersDataSource userService,
+                                              IUserPreferences userPreferences,
+                                              Context controllerContext) {
+        if (INSTANCE == null) {
+            INSTANCE = new UsersRepository(userService, userPreferences, controllerContext);
+        }
+        return INSTANCE;
     }
 
     @Override

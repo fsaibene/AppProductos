@@ -11,16 +11,21 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.fsaibene.appproductos.ProductsMvpController;
 import com.example.fsaibene.appproductos.R;
 import com.example.fsaibene.appproductos.di.DependencyProvider;
 import com.example.fsaibene.appproductos.login.LoginActivity;
 import com.example.fsaibene.appproductos.login.data.preferences.UserPrefs;
 import com.example.fsaibene.appproductos.login.presentation.LoginFragment;
 import com.example.fsaibene.appproductos.products.products.ProductsFragment;
+import com.example.fsaibene.appproductos.util.ActivityUtils;
 
 public class ProductsActivity extends AppCompatActivity {
+    private final static String STATE_PRODUCT_CODE = "state.product_code";
+
     private Toolbar mToolbar;
-    private ProductsFragment mProductsFragment;
+
+    private ProductsMvpController mProductsMvpController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,43 +41,38 @@ public class ProductsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_products);
 
         // Referencias UI
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mProductsFragment = (ProductsFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.products_container);
+        if (!ActivityUtils.isTwoPane(this)) {
+            mToolbar = (Toolbar) findViewById(R.id.toolbar);
+            setUpToolbar();
+        }
 
-        // Setup
-        setUpToolbar();
-        setUpProductsFragment();
+        // Obtener código del producto guardado en cambios de configuración.
+        // Este no se usará a menos que uses master-detail en ambas orientaciones.
+        String productCode = null;
+        if (savedInstanceState != null) {
+            productCode = savedInstanceState.getString(STATE_PRODUCT_CODE);
+        }
 
-        // Crear presentador
-        new ProductsPresenter(
-                DependencyProvider.provideProductsRepository(this),
-                DependencyProvider.provideUsersRepository(this),
-                mProductsFragment);
+        // Crear controlador de productos
+        mProductsMvpController = ProductsMvpController.createProductsMvp(this, productCode);
+
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_PRODUCT_CODE, mProductsMvpController.getProductCode());
+        super.onSaveInstanceState(outState);
     }
 
     private void setUpToolbar() {
         setSupportActionBar(mToolbar);
     }
-    private void setUpProductsFragment() {
-        if (mProductsFragment == null) {
-            mProductsFragment = ProductsFragment.newInstance();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.products_container, mProductsFragment)
-                    .commit();
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_products, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
 }
